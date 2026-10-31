@@ -4,10 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "python3 ../build.py dist --platform cloudflare",
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "build:pages": "python3 ../build.py dist --platform cloudflare --url https://slipt-vibe-receipts.pages.dev",
-    "deploy:pages": "wrangler pages deploy dist --config wrangler.pages.jsonc --project-name slipt-vibe-receipts --branch main"
+    "dev": "wrangler pages dev dist",
+    "deploy": "CLOUDFLARE_ACCOUNT_ID=3fc2b96db4d20e2f0ac929b851a672f2 wrangler pages deploy dist --project-name slipt --branch main"
   },
   "dependencies": {
     "@cloudflare/pages-plugin-vercel-og": "0.1.2"

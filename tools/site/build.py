@@ -2,14 +2,14 @@
 """Builds the public Slipt site: the same page as --board, with example receipts in Turkish and English, the
 install steps under the printer, a language switch and Open Graph tags.
 
-  python3 tools/site/build.py OUT_DIR [--url https://slipt.gsyfatlas.workers.dev]
+  python3 tools/site/build.py OUT_DIR [--url https://slipt.pages.dev]
 
 The first receipt is the site's own (real/: Slipt measured with itself, the fields
 a receipt shows and nothing more); the rest are example.py's. The "Ask Claude" cards' drawings come from art/
 (prepared by art.py). Writes OUT_DIR/index.html and OUT_DIR/og.png (copied from og.png here; og.html is its source), and copies the
 shared-receipt functions next to them for Vercel: api/, fonts/, package.json and vercel.json.
 With --platform cloudflare, writes only static assets and _routes.json; run Wrangler from
-tools/site/cloudflare to deploy them together with its Worker (or Pages Functions)."""
+tools/site/cloudflare to deploy them together with its Pages Functions."""
 import argparse, importlib.util, json, os, shutil, sys, urllib.parse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -41,7 +41,7 @@ def head(url):
 
 def main():
     ap = argparse.ArgumentParser(description='Build the public Slipt site')
-    ap.add_argument('out'); ap.add_argument('--url', default=os.environ.get('SITE_URL', 'https://slipt.gsyfatlas.workers.dev'))
+    ap.add_argument('out'); ap.add_argument('--url', default=os.environ.get('SITE_URL', 'https://slipt.pages.dev'))
     ap.add_argument('--platform', choices=('vercel', 'cloudflare'), default='vercel')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
