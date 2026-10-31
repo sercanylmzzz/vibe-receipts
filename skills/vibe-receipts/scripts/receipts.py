@@ -20,7 +20,7 @@ import argparse, base64, datetime, glob, html, http.server, json, os, pathlib, r
 
 IDLE       = 15            # minutes: fallback threshold when there are too few gaps for Tukey
 MIN_GAPS   = 20            # fewer gaps than this = Tukey threshold is not reliable
-SITE_URL   = 'https://slipt-vibe-receipts.vercel.app'   # --link: the public site opens a receipt carried in the link
+SITE_URL   = 'https://slipt.gsyfatlas.workers.dev'   # --link: the public site opens a receipt carried in the link
 CAP        = 30            # minutes: the automatic threshold never goes above this (a 30+ min gap is a break)
 SENS       = [5,10,15,20,30,45,60]   # thresholds shown in the sensitivity table
 BANDS      = [(0,2),(2,5),(5,15),(15,30),(30,60),(60,None)]

@@ -6,6 +6,9 @@ output/
 *.csv
 .DS_Store
 __pycache__/
+node_modules/
+.wrangler/
+tools/site/cloudflare/dist/
 
 # demo çıktısı (docs/ altındaki görseller hariç)
 demo/out/

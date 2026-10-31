@@ -7,7 +7,7 @@
 ![Zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
 
 > A fork of [sahmett/vibe-receipts](https://github.com/sahmett/vibe-receipts) by sahmett (MIT), grown into Slipt: the printer and its video,
-> the board, [the site](https://slipt-vibe-receipts.vercel.app), share links, invoices, Wrapped and the share kit.
+> the board, [the site](https://slipt.gsyfatlas.workers.dev), share links, invoices, Wrapped and the share kit.
 
 **How long did that "2-hour project" actually take?**
 vibe-receipts turns your Claude Code history into a shareable work-time receipt: the hours you really
@@ -139,7 +139,7 @@ python3 receipts.py --board                                          # rebuild t
 `--client` names the client and `--status due|paid|personal` picks the column; both are kept for later runs
 of the same range. Dragging a card to another column on the page is remembered in that browser.
 
-The public site, [slipt-vibe-receipts.vercel.app](https://slipt-vibe-receipts.vercel.app), shows the same page with example
+The public site, [slipt.gsyfatlas.workers.dev](https://slipt.gsyfatlas.workers.dev), shows the same page with example
 receipts. Drag your `~/vibe-receipts/archive` folder (or its JSON files) onto it to see your own: the files
 are read in the browser and kept there until you go back to the examples; nothing is uploaded.
 
@@ -149,7 +149,7 @@ are read in the browser and kept there until you go back to the examples; nothin
 
 ```bash
 python3 receipts.py . --link
-# Link: https://slipt-vibe-receipts.vercel.app/#r=bVLBjtow...
+# Link: https://slipt.gsyfatlas.workers.dev/#r=bVLBjtow...
 ```
 
 The receipt (its numbers and labels, without the client or the board column) is compressed into the part
@@ -161,14 +161,31 @@ itself, drawn on a 1200×630 card:
 
 ```bash
 python3 receipts.py . --share
-# Share link: https://slipt-vibe-receipts.vercel.app/r/bVLBjtow...
+# Share link: https://slipt.gsyfatlas.workers.dev/r/bVLBjtow...
 ```
 
 Here the receipt is in the path (`/r/...`), so the site's server reads it to draw that card and the page's
 title. It stores nothing: there is no database, the link is the receipt. The same fields as `--link` go in.
 
-The site is built by `tools/site/build.py`: the page, plus `api/r.js` (the `/r/...` page with the receipt's
-own tags) and `api/og.js` (its card, with `@vercel/og` and the Geist fonts in `tools/site/fonts`, OFL).
+The site is built by `tools/site/build.py` and hosted on Cloudflare Workers. Shared receipt pages and
+1200×630 preview images use a Worker; the homepage and fonts are static assets. The renderer
+is shared with the Vercel adapters in `tools/site/api/`, and the Geist fonts in `tools/site/fonts` are OFL.
+
+To build and deploy the public site (requires access to the Cloudflare account):
+
+```bash
+cd tools/site/cloudflare
+npm ci
+npm run build
+npm run deploy
+```
+
+The free Cloudflare address is `slipt.gsyfatlas.workers.dev`. Static requests do not invoke the Worker;
+`/r/*` uses the Workers Free allowance. No paid plan is required. Deployments are manual; a GitHub push
+alone does not deploy this Worker. Set `SITE_URL` when building for a different address.
+A Pages mirror is also available via `npm run build:pages` and `npm run deploy:pages`.
+For Vercel, `python3 tools/site/build.py OUT_DIR --platform vercel --url https://YOUR_SITE` still builds
+the original deployment format.
 
 ## Invoices and timesheets
 

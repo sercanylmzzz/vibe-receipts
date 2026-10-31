@@ -2,6 +2,7 @@
 // (JSON, raw deflate, base64url). Nothing is stored anywhere: the link is the receipt. Files starting with _
 // are not routes.
 import { inflateRawSync } from 'node:zlib';
+import { Buffer } from 'node:buffer';
 
 const txt = (v, n) => String(v ?? '').slice(0, n);
 const num = v => { const x = Number(v); return Number.isFinite(x) ? x : 0; };

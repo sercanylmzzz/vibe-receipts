@@ -2,13 +2,14 @@
 """Builds the public Slipt site: the same page as --board, with example receipts in Turkish and English, the
 install steps under the printer, a language switch and Open Graph tags.
 
-  python3 tools/site/build.py OUT_DIR [--url https://slipt-vibe-receipts.vercel.app]
+  python3 tools/site/build.py OUT_DIR [--url https://slipt.gsyfatlas.workers.dev]
 
 The first receipt is the site's own (real/: Slipt measured with itself, the fields
 a receipt shows and nothing more); the rest are example.py's. The "Ask Claude" cards' drawings come from art/
 (prepared by art.py). Writes OUT_DIR/index.html and OUT_DIR/og.png (copied from og.png here; og.html is its source), and copies the
-shared-receipt functions next to them: api/ (the /r/<receipt> page and its preview image), fonts/ for the image,
-package.json and vercel.json. Deploy OUT_DIR as it is."""
+shared-receipt functions next to them for Vercel: api/, fonts/, package.json and vercel.json.
+With --platform cloudflare, writes only static assets and _routes.json; run Wrangler from
+tools/site/cloudflare to deploy them together with its Worker (or Pages Functions)."""
 import argparse, importlib.util, json, os, shutil, sys, urllib.parse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -40,7 +41,8 @@ def head(url):
 
 def main():
     ap = argparse.ArgumentParser(description='Build the public Slipt site')
-    ap.add_argument('out'); ap.add_argument('--url', default=os.environ.get('SITE_URL', 'https://slipt-vibe-receipts.vercel.app'))
+    ap.add_argument('out'); ap.add_argument('--url', default=os.environ.get('SITE_URL', 'https://slipt.gsyfatlas.workers.dev'))
+    ap.add_argument('--platform', choices=('vercel', 'cloudflare'), default='vercel')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     own = {l: json.load(open(os.path.join(HERE, 'real', f'slipt.{l}.json'), encoding='utf-8')) for l in ('tr', 'en')}
@@ -50,11 +52,15 @@ def main():
     page = page.replace('<title>Slipt</title>', '<title>Slipt · Vibe receipts for your projects</title>')
     with open(os.path.join(a.out, 'index.html'), 'w', encoding='utf-8') as f: f.write(page)
     shutil.copyfile(os.path.join(HERE, 'og.png'), os.path.join(a.out, 'og.png'))
-    for d in ('api', 'fonts'):
+    for d in (('api', 'fonts') if a.platform == 'vercel' else ('fonts',)):
         shutil.copytree(os.path.join(HERE, d), os.path.join(a.out, d), dirs_exist_ok=True)
-    for f in ('package.json', 'vercel.json'):
-        shutil.copyfile(os.path.join(HERE, f), os.path.join(a.out, f))
-    print('wrote', a.out, ': index.html, og.png, api/, fonts/, package.json, vercel.json')
+    if a.platform == 'vercel':
+        for f in ('package.json', 'vercel.json'):
+            shutil.copyfile(os.path.join(HERE, f), os.path.join(a.out, f))
+    else:
+        with open(os.path.join(a.out, '_routes.json'), 'w') as f:
+            json.dump({'version': 1, 'include': ['/r/*'], 'exclude': []}, f)
+    print('wrote', a.out, 'for', a.platform)
 
 
 if __name__ == '__main__':
