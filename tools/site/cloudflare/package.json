@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "python3 ../build.py dist --platform cloudflare",
+    "build": "python3 ../build.py dist",
     "dev": "wrangler pages dev dist",
     "deploy": "CLOUDFLARE_ACCOUNT_ID=3fc2b96db4d20e2f0ac929b851a672f2 wrangler pages deploy dist --project-name slipt --branch main"
   },

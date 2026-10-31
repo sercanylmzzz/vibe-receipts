@@ -168,8 +168,8 @@ Here the receipt is in the path (`/r/...`), so the site's server reads it to dra
 title. It stores nothing: there is no database, the link is the receipt. The same fields as `--link` go in.
 
 The site is built by `tools/site/build.py` and hosted on Cloudflare Pages. Shared receipt pages and
-1200×630 preview images use a Pages Function; the homepage and fonts are static assets. The renderer
-is shared with the Vercel adapters in `tools/site/api/`, and the Geist fonts in `tools/site/fonts` are OFL.
+1200×630 preview images use a Pages Function; the homepage and fonts are static assets. The receipt
+renderers live in `tools/site/api/`, and the Geist fonts in `tools/site/fonts` are OFL.
 
 To build and deploy the public site (requires access to the Cloudflare account):
 
@@ -183,8 +183,6 @@ npm run deploy
 The free Cloudflare address is `slipt.pages.dev`. Static requests do not invoke a Function;
 `/r/*` uses the Workers Free allowance. No paid plan is required. Deployments are manual; a GitHub push
 alone does not deploy this Pages project. Set `SITE_URL` when building for a different address.
-For Vercel, `python3 tools/site/build.py OUT_DIR --platform vercel --url https://YOUR_SITE` still builds
-the original deployment format.
 
 ## Invoices and timesheets
 

@@ -6,10 +6,9 @@ install steps under the printer, a language switch and Open Graph tags.
 
 The first receipt is the site's own (real/: Slipt measured with itself, the fields
 a receipt shows and nothing more); the rest are example.py's. The "Ask Claude" cards' drawings come from art/
-(prepared by art.py). Writes OUT_DIR/index.html and OUT_DIR/og.png (copied from og.png here; og.html is its source), and copies the
-shared-receipt functions next to them for Vercel: api/, fonts/, package.json and vercel.json.
-With --platform cloudflare, writes only static assets and _routes.json; run Wrangler from
-tools/site/cloudflare to deploy them together with its Pages Functions."""
+(prepared by art.py). Writes OUT_DIR/index.html, OUT_DIR/og.png (copied from og.png here;
+og.html is its source), fonts and _routes.json. Run Wrangler from tools/site/cloudflare
+to deploy these assets together with the Pages Functions."""
 import argparse, importlib.util, json, os, shutil, sys, urllib.parse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -29,7 +28,7 @@ ICON = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><line
 def head(url):
     e = lambda s: s.replace('&', '&amp;').replace('"', '&quot;')
     title, desc = 'Slipt · Vibe receipts for your projects', 'A Claude Code skill that turns your work into receipts. Measured from your own prompts, on your own machine.'
-    # the shared-receipt page (api/r.js) puts its own tags between the markers
+    # the shared-receipt renderer (api/_page.js) puts its own tags between the markers
     return (f'<!--og--><meta name="description" content="{e(desc)}">'
             f'<meta property="og:type" content="website"><meta property="og:site_name" content="Slipt"><meta property="og:title" content="{e(title)}">'
             f'<meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}/">'
@@ -42,7 +41,6 @@ def head(url):
 def main():
     ap = argparse.ArgumentParser(description='Build the public Slipt site')
     ap.add_argument('out'); ap.add_argument('--url', default=os.environ.get('SITE_URL', 'https://slipt.pages.dev'))
-    ap.add_argument('--platform', choices=('vercel', 'cloudflare'), default='vercel')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     own = {l: json.load(open(os.path.join(HERE, 'real', f'slipt.{l}.json'), encoding='utf-8')) for l in ('tr', 'en')}
@@ -52,15 +50,10 @@ def main():
     page = page.replace('<title>Slipt</title>', '<title>Slipt · Vibe receipts for your projects</title>')
     with open(os.path.join(a.out, 'index.html'), 'w', encoding='utf-8') as f: f.write(page)
     shutil.copyfile(os.path.join(HERE, 'og.png'), os.path.join(a.out, 'og.png'))
-    for d in (('api', 'fonts') if a.platform == 'vercel' else ('fonts',)):
-        shutil.copytree(os.path.join(HERE, d), os.path.join(a.out, d), dirs_exist_ok=True)
-    if a.platform == 'vercel':
-        for f in ('package.json', 'vercel.json'):
-            shutil.copyfile(os.path.join(HERE, f), os.path.join(a.out, f))
-    else:
-        with open(os.path.join(a.out, '_routes.json'), 'w') as f:
-            json.dump({'version': 1, 'include': ['/r/*'], 'exclude': []}, f)
-    print('wrote', a.out, 'for', a.platform)
+    shutil.copytree(os.path.join(HERE, 'fonts'), os.path.join(a.out, 'fonts'), dirs_exist_ok=True)
+    with open(os.path.join(a.out, '_routes.json'), 'w') as f:
+        json.dump({'version': 1, 'include': ['/r/*'], 'exclude': []}, f)
+    print('wrote', a.out, 'for Cloudflare Pages')
 
 
 if __name__ == '__main__':
