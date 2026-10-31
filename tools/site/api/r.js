@@ -20,7 +20,7 @@ export function GET(request) {
     + `<meta property="og:image" content="${esc(img)}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">`
     + `<meta property="og:image:alt" content="${esc(`${title}, ${count(r, W)}`)}"><meta name="twitter:card" content="summary_large_image">`
     + `<meta name="twitter:title" content="${esc(title)}"><meta name="twitter:image" content="${esc(img)}">`;
-  const html = page.replace(/<!--og-->[\s\S]*?<!--\/og-->/, tags).replace('<title>Slipt</title>', `<title>${esc(title)} · Slipt</title>`);
+  const html = page.replace(/<!--og-->[\s\S]*?<!--\/og-->/, tags).replace(/<title>[^<]*<\/title>/, `<title>${esc(title)} · Slipt</title>`);
   // the address is the receipt, so the answer never changes for it
   return new Response(html, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=300, s-maxage=31536000' } });
 }

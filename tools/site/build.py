@@ -2,7 +2,7 @@
 """Builds the public Slipt site: the same page as --board, with example receipts in Turkish and English, the
 install steps under the printer, a language switch and Open Graph tags.
 
-  python3 tools/site/build.py OUT_DIR [--url https://slipt-phi.vercel.app]
+  python3 tools/site/build.py OUT_DIR [--url https://slipt-vibe-receipts.vercel.app]
 
 The first receipt is the site's own (real/: Slipt measured with itself, the fields
 a receipt shows and nothing more); the rest are example.py's. The "Ask Claude" cards' drawings come from art/
@@ -27,7 +27,7 @@ ICON = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><line
 
 def head(url):
     e = lambda s: s.replace('&', '&amp;').replace('"', '&quot;')
-    title, desc = 'Slipt · Çalıştığın saatin fişi', "Claude Code'daki kendi prompt aralıklarından ölçülür. Yerelde kalır."
+    title, desc = 'Slipt · Vibe receipts for your projects', 'A Claude Code skill that turns your work into receipts. Measured from your own prompts, on your own machine.'
     # the shared-receipt page (api/r.js) puts its own tags between the markers
     return (f'<!--og--><meta name="description" content="{e(desc)}">'
             f'<meta property="og:type" content="website"><meta property="og:site_name" content="Slipt"><meta property="og:title" content="{e(title)}">'
@@ -40,13 +40,14 @@ def head(url):
 
 def main():
     ap = argparse.ArgumentParser(description='Build the public Slipt site')
-    ap.add_argument('out'); ap.add_argument('--url', default='https://slipt-phi.vercel.app')
+    ap.add_argument('out'); ap.add_argument('--url', default=os.environ.get('SITE_URL', 'https://slipt-vibe-receipts.vercel.app'))
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     own = {l: json.load(open(os.path.join(HERE, 'real', f'slipt.{l}.json'), encoding='utf-8')) for l in ('tr', 'en')}
     site = dict(github='https://github.com/sercanylmzzz/vibe-receipts', today=max(example.TODAY, own['en']['end']),
                 receipts={l: [own[l]] + example.receipts(l) for l in ('tr', 'en')}, art=art.cards())
     page = receipts.board_page(site['receipts']['tr'], 'tr', site=site, head=head(a.url.rstrip('/')))
+    page = page.replace('<title>Slipt</title>', '<title>Slipt · Vibe receipts for your projects</title>')
     with open(os.path.join(a.out, 'index.html'), 'w', encoding='utf-8') as f: f.write(page)
     shutil.copyfile(os.path.join(HERE, 'og.png'), os.path.join(a.out, 'og.png'))
     for d in ('api', 'fonts'):

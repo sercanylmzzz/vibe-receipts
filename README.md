@@ -7,7 +7,7 @@
 ![Zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
 
 > A fork of [sahmett/vibe-receipts](https://github.com/sahmett/vibe-receipts) by sahmett (MIT), grown into Slipt: the printer and its video,
-> the board, [the site](https://slipt-phi.vercel.app), share links, invoices, Wrapped and the share kit.
+> the board, [the site](https://slipt-vibe-receipts.vercel.app), share links, invoices, Wrapped and the share kit.
 
 **How long did that "2-hour project" actually take?**
 vibe-receipts turns your Claude Code history into a shareable work-time receipt: the hours you really
@@ -139,7 +139,7 @@ python3 receipts.py --board                                          # rebuild t
 `--client` names the client and `--status due|paid|personal` picks the column; both are kept for later runs
 of the same range. Dragging a card to another column on the page is remembered in that browser.
 
-The public site, [slipt-phi.vercel.app](https://slipt-phi.vercel.app), shows the same page with example
+The public site, [slipt-vibe-receipts.vercel.app](https://slipt-vibe-receipts.vercel.app), shows the same page with example
 receipts. Drag your `~/vibe-receipts/archive` folder (or its JSON files) onto it to see your own: the files
 are read in the browser and kept there until you go back to the examples; nothing is uploaded.
 
@@ -149,7 +149,7 @@ are read in the browser and kept there until you go back to the examples; nothin
 
 ```bash
 python3 receipts.py . --link
-# Link: https://slipt-phi.vercel.app/#r=bVLBjtow...
+# Link: https://slipt-vibe-receipts.vercel.app/#r=bVLBjtow...
 ```
 
 The receipt (its numbers and labels, without the client or the board column) is compressed into the part
@@ -161,7 +161,7 @@ itself, drawn on a 1200×630 card:
 
 ```bash
 python3 receipts.py . --share
-# Share link: https://slipt-phi.vercel.app/r/bVLBjtow...
+# Share link: https://slipt-vibe-receipts.vercel.app/r/bVLBjtow...
 ```
 
 Here the receipt is in the path (`/r/...`), so the site's server reads it to draw that card and the page's
